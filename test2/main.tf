@@ -39,5 +39,30 @@ resource "azurerm_virtual_network" "tfexample" {
   tags = {
     environment = "my-terraform-env"
   }
+  
 
+}
+# Create a Subnet in the Virtual Network
+resource "azurerm_subnet" "tfexample" {
+  name                 = "my-terraform-subnet"
+  resource_group_name  = azurerm_resource_group.tfexample.name
+  virtual_network_name = azurerm_virtual_network.tfexample.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+
+# Create a Network Interface
+resource "azurerm_network_interface" "tfexample" {
+  name                = "my-terraform-nic"
+  location            = azurerm_resource_group.tfexample.location
+  resource_group_name = azurerm_resource_group.tfexample.name
+
+  ip_configuration {
+    name                          = "my-terraform-nic-ip-config"
+    subnet_id                     = azurerm_subnet.tfexample.id
+    private_ip_address_allocation = "Dynamic"
+  }
+
+  tags = {
+    environment = "my-terraform-env"
+  }
 }
